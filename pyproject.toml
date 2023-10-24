@@ -4,8 +4,8 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "netlasso"
-version = "0.1b1"
-description = "Reddit Data Analysis Toolkit."
+version = "0.1b2"
+description = "Perform advanced searches for internet-connected (IoT) devices based on user-provided search queries."
 authors = ["Richard Mwewa <rly0nheart@duck.com>"]
 readme = "README.md"
 license = "MIT License"
