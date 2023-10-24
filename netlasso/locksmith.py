@@ -63,10 +63,6 @@ def set_api_key(api_key: str) -> str:
                 with open(api_key_path, "rb") as api_key_file:
                     encrypted_api_key = api_key_file.read()
                     final_api_key = decrypt_data(encryption_key, encrypted_api_key)
-                    if api_key:
-                        log.info(
-                            f"Netlas.io API key is already configured: {api_key_file.name}"
-                        )
     except Exception as e:
         log.error(f"An error occurred while handling the API key: {e}")
         raise
@@ -79,15 +75,19 @@ def set_encryption_key() -> bytes:
     Retrieve the encryption key from file or generate if it doesn't exist.
     :return: Encryption key.
     """
+    encryption_key_path = os.path.join(CURRENT_FILE_DIRECTORY, ".encryption-key")
     try:
         # If encryption key exists, retrieve it.
-        if os.path.exists(KEY_PATH) and os.path.getsize(KEY_PATH) > 0:
-            with open(KEY_PATH, "rb") as encryption_key_file:
+        if (
+            os.path.exists(encryption_key_path)
+            and os.path.getsize(encryption_key_path) > 0
+        ):
+            with open(encryption_key_path, "rb") as encryption_key_file:
                 return encryption_key_file.read()
         else:
             # If encryption key doesn't exist, generate a new one and store it.
             new_key = generate_encryption_key()
-            with open(KEY_PATH, "wb") as encryption_key_file:
+            with open(encryption_key_path, "wb") as encryption_key_file:
                 encryption_key_file.write(new_key)
 
             log.info(f"Encryption key written: {encryption_key_file.name}")
@@ -95,7 +95,3 @@ def set_encryption_key() -> bytes:
     except Exception as e:
         log.error(f"An error occurred while handling the encryption key: {e}")
         raise
-
-
-# Path to where the encryption key will be stored.
-KEY_PATH = os.path.join(CURRENT_FILE_DIRECTORY, ".encryption-key")
