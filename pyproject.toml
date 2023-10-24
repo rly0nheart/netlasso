@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "netlasso"
-version = "0.1b3"
+version = "0.1b5"
 description = "Perform advanced searches for internet-connected (IoT) devices based on user-provided search queries."
 authors = ["Richard Mwewa <rly0nheart@duck.com>"]
 readme = "README.md"
@@ -25,6 +25,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
+cryptography = "*"
 netlas = "*"
 rich = "*"
 rich-argparse = "*"
