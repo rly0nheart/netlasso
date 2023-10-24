@@ -48,16 +48,8 @@ def set_api_key(api_key: str) -> str:
 
     api_key_path = os.path.join(CURRENT_FILE_DIRECTORY, ".netlas-auth")
     try:
-        # If API key exists, decrypt and retrieve it.
-        if os.path.exists(api_key_path) and os.path.getsize(api_key_path) > 0:
-            with open(api_key_path, "rb") as api_key_file:
-                encrypted_api_key = api_key_file.read()
-                final_api_key = decrypt_data(encryption_key, encrypted_api_key)
-                if api_key:
-                    log.info(
-                        f"Netlas.io API key is already configured: {api_key_file.name}"
-                    )
-        else:
+        final_api_key = None
+        if api_key:
             # If API key doesn't exist, encrypt the provided key and store it.
             encrypted_api_key = encrypt_data(encryption_key, api_key)
             with open(api_key_path, "wb") as api_key_file:
@@ -65,6 +57,16 @@ def set_api_key(api_key: str) -> str:
 
             log.info(f"Netlas.io API key written: {api_key_path}")
             final_api_key = api_key
+        else:
+            # If API key exists, decrypt and retrieve it.
+            if os.path.exists(api_key_path) and os.path.getsize(api_key_path) > 0:
+                with open(api_key_path, "rb") as api_key_file:
+                    encrypted_api_key = api_key_file.read()
+                    final_api_key = decrypt_data(encryption_key, encrypted_api_key)
+                    if api_key:
+                        log.info(
+                            f"Netlas.io API key is already configured: {api_key_file.name}"
+                        )
     except Exception as e:
         log.error(f"An error occurred while handling the API key: {e}")
         raise
