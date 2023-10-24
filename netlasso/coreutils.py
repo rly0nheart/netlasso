@@ -125,7 +125,7 @@ def create_parser() -> argparse.ArgumentParser:
         epilog=Markdown(__epilog__, style="argparse.text"),
         formatter_class=RichHelpFormatter,
     )
-    parser.add_argument("query", help="Search query string")
+    parser.add_argument("query", help="Search query")
     parser.add_argument(
         "-p",
         "--page",
