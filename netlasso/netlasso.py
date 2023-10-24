@@ -11,7 +11,7 @@ from .coreutils import (
     path_finder,
     save_data,
 )
-from .key_handler import set_api_key
+from .locksmith import set_api_key
 from .tree_masonry import result_branch
 
 
