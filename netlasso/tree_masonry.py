@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 
 from rich import print
 from rich.tree import Tree
@@ -7,7 +8,10 @@ from .coreutils import format_api_data, save_data
 
 
 def add_branch(
-    target_tree: Tree, branch_title: str, branch_data: dict, additional_text: str = None
+    target_tree: Tree,
+    branch_title: str,
+    branch_data: Union[dict, list],
+    additional_text: str = None,
 ) -> Tree:
     """
     Adds a branch to a specified tree and populates it with the given data.
@@ -19,10 +23,16 @@ def add_branch(
     :return: A populated branch.
     """
     branch = target_tree.add(branch_title)
-    for key, value in branch_data.items():
-        branch.add(f"{key}: {value}", style="dim")
-    if additional_text:
-        branch.add(additional_text, style="italic")
+    data_types = [dict, list]
+    if type(branch_data) in data_types:
+        if type(branch_data) is dict:
+            for key, value in branch_data.items():
+                branch.add(f"{key}: {value}", style="dim")
+            if additional_text:
+                branch.add(additional_text, style="italic")
+        else:
+            for index, item in enumerate(branch_data, start=1):
+                branch.add(f"{index}. {item}", style="italic")
     return branch
 
 
@@ -69,6 +79,12 @@ def result_branch(main_tree: Tree, result_data: dict) -> Tree:
             data_file="asn.json",
         ),
     )
+    if result_data.get("domain"):
+        add_branch(
+            target_tree=branch,
+            branch_title="Domains",
+            branch_data=result_data.get("domain"),
+        )
 
     return main_tree
 
