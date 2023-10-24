@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from rich import print
 from rich.tree import Tree
 
 from .coreutils import format_api_data, save_data
