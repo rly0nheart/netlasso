@@ -7,10 +7,10 @@ from rich.tree import Tree
 from .coreutils import (
     __version__,
     create_parser,
-    get_api_key,
     log,
     save_data,
 )
+from .key_handler import get_api_key
 from .tree_masonry import result_branch
 
 

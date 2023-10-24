@@ -24,34 +24,7 @@ def setup_logging(debug_mode: bool) -> logging.getLogger:
             RichHandler(markup=True, log_time_format="%I:%M:%S %p", show_level=False)
         ],
     )
-    return logging.getLogger("Netlasso")
-
-
-def get_api_key(api_key: str) -> str:
-    """
-    Retrieve or store the Netlas.io API key.
-
-    :param api_key: The API key provided as input.
-    :return: The final API key, either retrieved from the file or the one provided by the user.
-    """
-    api_key_path = os.path.join(CURRENT_FILE_DIRECTORY, ".netlas-auth")
-    try:
-        # Check if the API key file exists and is not empty
-        if os.path.exists(api_key_path) and os.path.getsize(api_key_path) > 0:
-            # Read API key from the file
-            with open(api_key_path, "r") as file:
-                final_api_key = file.readline().rstrip("\n")
-        else:
-            # Write the input API key to the file
-            with open(api_key_path, "w") as file:
-                file.write(api_key)
-
-            log.info(f"Netlas.io API key written to {api_key_path}")
-            final_api_key = api_key
-    except Exception as e:
-        log.error(f"An error occurred while handling the API key: {e}")
-
-    return final_api_key
+    return logging.getLogger("Net Lasso")
 
 
 def format_api_data(api_data: dict, data_file: str) -> dict:
