@@ -74,7 +74,8 @@ def set_api_key(api_key: str) -> str:
                 log.info(f"Netlas.io API key written: {api_key_path}")
                 final_api_key = api_key
             else:
-                log.warning(f"{api_key} is an invalid Netlas.io API key.")
+                log.warning("No API key was provided, and none exists on disk.")
+                raise
     except Exception as e:
         log.error(f"An error occurred while handling the API key: {e}")
         raise
