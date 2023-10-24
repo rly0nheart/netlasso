@@ -35,7 +35,7 @@ def decrypt_data(key: bytes, encrypted_data: bytes) -> str:
     return cipher.decrypt(encrypted_data).decode()
 
 
-def get_api_key(api_key: str) -> str:
+def set_api_key(api_key: str) -> str:
     """
     Retrieve or store the Netlas.io API key.
     If the key is not stored, it encrypts and saves it. Otherwise, it retrieves and decrypts it.
@@ -44,7 +44,7 @@ def get_api_key(api_key: str) -> str:
     :return: The final API key, either retrieved from the file or the one provided by the user.
     """
     # Get or Set the encryption key.
-    encryption_key = get_encryption_key()
+    encryption_key = set_encryption_key()
 
     api_key_path = os.path.join(CURRENT_FILE_DIRECTORY, ".netlas-auth")
     try:
@@ -72,7 +72,7 @@ def get_api_key(api_key: str) -> str:
     return final_api_key
 
 
-def get_encryption_key() -> bytes:
+def set_encryption_key() -> bytes:
     """
     Retrieve the encryption key from file or generate if it doesn't exist.
     :return: Encryption key.
