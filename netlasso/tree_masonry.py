@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from rich.tree import Tree
 
-from .coreutils import format_api_data
+from .coreutils import format_api_data, save_data
 
 
 def add_branch(
@@ -68,3 +70,47 @@ def result_branch(main_tree: Tree, result_data: dict) -> Tree:
     )
 
     return main_tree
+
+
+async def results_tree(
+    results: list,
+    limit: int,
+    save_to_json: bool,
+    save_to_csv: bool,
+    return_raw: bool = False,
+):
+    """
+    Saves and visualises the search results into a tree structure.
+
+    :param results: A list of search results from the search() function.
+    :param limit: Number of results to visualise (default is 10).
+    :param save_to_json: A boolean value to indicate whether to save data to a JSON file.
+    :param save_to_csv: A boolean value to indicate whether to save data to a CSV file.
+    :param return_raw: A boolean value indicating whether results should be printed in raw JSON format.
+    """
+    if results:
+        main_tree = Tree(
+            f"Showing [cyan]{limit}[/] results - {datetime.now()}",
+            style="bold",
+            guide_style="bold bright_blue",
+        )
+        # iterate over data and print: IP address, port, path and protocol
+        for result_index, result in enumerate(results, start=1):
+            raw_result_data = result.get("data")
+            if return_raw:
+                print(raw_result_data)
+                print("\n")
+            else:
+                result_branch(main_tree=main_tree, result_data=raw_result_data)
+
+            save_data(
+                data=raw_result_data,
+                save_to_json=save_to_json,
+                save_to_csv=save_to_csv,
+                filename=f"{raw_result_data.get('isp')}_{raw_result_data.get('ip')}",
+            )
+            if result_index == limit:
+                break
+
+        if not return_raw:
+            print(main_tree)
