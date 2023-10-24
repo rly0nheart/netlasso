@@ -11,6 +11,15 @@ from rich_argparse import RichHelpFormatter
 from . import __description__, __epilog__, __version__
 
 
+def path_finder():
+    """
+    Creates file directories if they don't already exist.
+    """
+    file_directories = [CSV_DIRECTORY, JSON_DIRECTORY]
+    for directory in file_directories:
+        os.makedirs(directory, exist_ok=True)
+
+
 def setup_logging(debug_mode: bool) -> logging.getLogger:
     """
     Configure and return a logging object with the specified log level.
