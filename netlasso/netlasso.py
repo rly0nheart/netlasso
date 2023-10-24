@@ -11,7 +11,7 @@ from .coreutils import (
     path_finder,
     save_data,
 )
-from .key_handler import get_api_key
+from .key_handler import set_api_key
 from .tree_masonry import result_branch
 
 
@@ -86,7 +86,7 @@ def on_call():
     args = create_parser().parse_args()
     api_key = None
     if args.authenticate:
-        api_key = get_api_key(api_key=args.authenticate)
+        api_key = set_api_key(api_key=args.authenticate)
     if args.query:
         try:
             print(
@@ -96,7 +96,7 @@ def on_call():
 ┛┗┗ ┗  ┗┛┗┻┛┛┗┛"""
             )
             path_finder()
-            log.info(f"Starting Net Lasso {__version__} at {start_time}...")
+            log.info(f"Starting [bold]Net Lasso[/] {__version__} at {start_time}...")
 
             results = search(query=args.query, page=args.page, api_key=api_key)
             visualise_results(
