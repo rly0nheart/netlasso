@@ -1,4 +1,5 @@
-![netlasso](https://github.com/rly0nheart/netlasso/assets/74001397/f2ca8491-b8d9-4d35-b824-439870819986)
+![netlasso](https://github.com/rly0nheart/netlasso/assets/74001397/dee2a9b4-bc3a-4876-9ccc-a958bff7ad3d)
+
 
 
 **Net Lasso** utilises the [Netlas.io API](https://netlas.io/api) to perform advanced searches for internet-connected (IoT) devices based on user-provided search queries.
