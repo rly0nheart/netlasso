@@ -8,6 +8,7 @@ from .coreutils import (
     __version__,
     create_parser,
     log,
+    path_finder,
     save_data,
 )
 from .key_handler import get_api_key
@@ -52,12 +53,12 @@ def visualise_results(
     :param save_to_csv: A boolean value to indicate whether to save data to a CSV file.
     :param return_raw: A boolean value indicating whether results should be printed in raw JSON format.
     """
-    main_tree = Tree(
-        f"Showing [cyan]{limit}[/] results - {datetime.now()}",
-        style="bold",
-        guide_style="bold bright_blue",
-    )
     if results:
+        main_tree = Tree(
+            f"Showing [cyan]{limit}[/] results - {datetime.now()}",
+            style="bold",
+            guide_style="bold bright_blue",
+        )
         # iterate over data and print: IP address, port, path and protocol
         for result_index, result in enumerate(results, start=1):
             raw_result_data = result.get("data")
@@ -71,12 +72,13 @@ def visualise_results(
                 data=raw_result_data,
                 save_to_json=save_to_json,
                 save_to_csv=save_to_csv,
-                filename=raw_result_data.get("isp"),
+                filename=f"{raw_result_data.get('isp')}_{raw_result_data.get('ip')}",
             )
             if result_index == limit:
                 break
 
-        print(main_tree)
+        if not return_raw:
+            print(main_tree)
 
 
 def on_call():
@@ -93,6 +95,7 @@ def on_call():
 ┃┃┏┓╋  ┃ ┏┓┏┏┏┓
 ┛┗┗ ┗  ┗┛┗┻┛┛┗┛"""
             )
+            path_finder()
             log.info(f"Starting Net Lasso {__version__} at {start_time}...")
 
             results = search(query=args.query, page=args.page, api_key=api_key)
