@@ -84,6 +84,8 @@ def visualise_results(
 def on_call():
     start_time = datetime.now()
     args = create_parser().parse_args()
+    api_key = set_api_key(args.authenticate)
+
     if args.query:
         try:
             print(
@@ -98,7 +100,7 @@ def on_call():
             results = search(
                 query=args.query,
                 page=args.page,
-                api_key=set_api_key(api_key=args.authenticate),
+                api_key=api_key,
             )
             visualise_results(
                 results=results,
