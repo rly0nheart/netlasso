@@ -31,4 +31,5 @@ rich = "*"
 rich-argparse = "*"
 
 [tool.poetry.scripts]
+ntlso = "netlasso.netlasso:on_call"
 netlasso = "netlasso.netlasso:on_call"
