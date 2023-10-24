@@ -14,7 +14,7 @@ pip install netlasso
 
 # Usage
 
-You can start searching by calling **Net Lasso** with the a search query
+You can start searching by calling **Net Lasso** with a search query
 
 ```commandline
 netlasso <query_string>
