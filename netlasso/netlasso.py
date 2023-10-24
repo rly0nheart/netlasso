@@ -8,13 +8,14 @@ from .coreutils import (
     __version__,
     create_parser,
     log,
+    path_finder,
     save_data,
 )
-from .key_handler import get_api_key
+from .locksmith import set_api_key
 from .tree_masonry import result_branch
 
 
-def search(query: str, page: int, api_key: str = None) -> list:
+def search(query: str, page: int, api_key: str) -> list:
     """
     Searches Netlas.io and fetches search results that match a given query.
 
@@ -23,15 +24,15 @@ def search(query: str, page: int, api_key: str = None) -> list:
     :param api_key: A valid Netlas.io API key.
     :return: A list of results that matched the query.
     """
-    apikey = get_api_key(api_key=api_key)
     netlas_query = None
     try:
         # create new connection to Netlas
-        netlas_connection = netlas.Netlas(api_key=apikey)
-        # retrieve data from responses by query `port:7001`
+        netlas_connection = netlas.Netlas(api_key=api_key)
+
+        # retrieve data from responses by query
         netlas_query = netlas_connection.query(query=query, page=page)
     except netlas.exception.APIError as e:
-        log.error(e)
+        log.error(f"An API Error occurred: {e}")
 
     return netlas_query.get("items")
 
@@ -52,12 +53,12 @@ def visualise_results(
     :param save_to_csv: A boolean value to indicate whether to save data to a CSV file.
     :param return_raw: A boolean value indicating whether results should be printed in raw JSON format.
     """
-    main_tree = Tree(
-        f"Showing [cyan]{limit}[/] results - {datetime.now()}",
-        style="bold",
-        guide_style="bold bright_blue",
-    )
     if results:
+        main_tree = Tree(
+            f"Showing [cyan]{limit}[/] results - {datetime.now()}",
+            style="bold",
+            guide_style="bold bright_blue",
+        )
         # iterate over data and print: IP address, port, path and protocol
         for result_index, result in enumerate(results, start=1):
             raw_result_data = result.get("data")
@@ -71,20 +72,20 @@ def visualise_results(
                 data=raw_result_data,
                 save_to_json=save_to_json,
                 save_to_csv=save_to_csv,
-                filename=raw_result_data.get("isp"),
+                filename=f"{raw_result_data.get('isp')}_{raw_result_data.get('ip')}",
             )
             if result_index == limit:
                 break
 
-        print(main_tree)
+        if not return_raw:
+            print(main_tree)
 
 
 def on_call():
     start_time = datetime.now()
     args = create_parser().parse_args()
-    api_key = None
-    if args.authenticate:
-        api_key = get_api_key(api_key=args.authenticate)
+    api_key = set_api_key(args.authenticate)
+
     if args.query:
         try:
             print(
@@ -93,9 +94,14 @@ def on_call():
 ┃┃┏┓╋  ┃ ┏┓┏┏┏┓
 ┛┗┗ ┗  ┗┛┗┻┛┛┗┛"""
             )
-            log.info(f"Starting Net Lasso {__version__} at {start_time}...")
+            path_finder()
+            log.info(f"Starting [bold]Net Lasso[/] {__version__} at {start_time}")
 
-            results = search(query=args.query, page=args.page, api_key=api_key)
+            results = search(
+                query=args.query,
+                page=args.page,
+                api_key=api_key,
+            )
             visualise_results(
                 results=results,
                 return_raw=args.raw,

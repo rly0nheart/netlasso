@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "netlasso"
-version = "0.1b5"
+version = "1.0.0rc1"
 description = "Perform advanced searches for internet-connected (IoT) devices based on user-provided search queries."
 authors = ["Richard Mwewa <rly0nheart@duck.com>"]
 readme = "README.md"
@@ -14,7 +14,7 @@ documentation = "https://github.com/rly0nheart/netlasso/blob/master/README.md"
 repository = "https://github.com/rly0nheart/netlasso"
 keywords = ["iot", "internet-of-things", "netlas-io-api", "netlas-io", "netlas"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 6 - Mature",
    #"Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Intended Audience :: Information Technology",
