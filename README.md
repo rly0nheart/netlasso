@@ -17,8 +17,9 @@ Assumming you already have an API key, you can proceed to authenticate Net Lasso
 ```commandline
 netlasso --authenticate <api_key>
 ```
-> The API key will be written to a *.netlas-auth* file in the program's installation directory.
->> This ensures that the key won't be easily accessible to anyone.
+> This will encrypt and write the API key to *.netlas-auth* file in the program's installation directory.
+>> It will also write the encryption key *.encryption-key* to the same directory.
+>>> This ensures the user's API key is not easily accessible.
 
 # Usage
 After authenticating, you can start searching by calling Net Lasso with the required command-line arguments
