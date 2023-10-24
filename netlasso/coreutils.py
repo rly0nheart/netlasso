@@ -5,9 +5,10 @@ import logging
 import os
 
 from rich.logging import RichHandler
+from rich.markdown import Markdown
 from rich_argparse import RichHelpFormatter
 
-from . import __about__, __author__, __version__
+from . import __description__, __epilog__, __version__
 
 
 def setup_logging(debug_mode: bool) -> logging.getLogger:
@@ -96,9 +97,8 @@ def create_parser() -> argparse.ArgumentParser:
     :return: A configured argparse.ArgumentParser object ready to parse the command line arguments.
     """
     parser = argparse.ArgumentParser(
-        description=f"Net Lasso - by {__author__} ({__about__})",
-        epilog="Net Lasso utilises the Netlas.io API to perform advanced searches for "
-        "internet-connected (IoT) devices based on user-provided search queries.",
+        description=Markdown(__description__, style="argparse.text"),
+        epilog=Markdown(__epilog__, style="argparse.text"),
         formatter_class=RichHelpFormatter,
     )
     parser.add_argument("-q", "--query", help="Search query string")
