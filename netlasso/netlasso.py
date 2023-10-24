@@ -93,7 +93,7 @@ def on_call():
 ┛┗┗ ┗  ┗┛┗┻┛┛┗┛"""
             )
             path_finder()
-            log.info(f"Starting [bold]Net Lasso[/] {__version__} at {start_time}...")
+            log.info(f"Starting [bold]Net Lasso[/] {__version__} at {start_time}")
 
             results = search(
                 query=args.query,
