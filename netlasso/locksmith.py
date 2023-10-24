@@ -63,6 +63,13 @@ def set_api_key(api_key: str) -> str:
                 with open(api_key_path, "rb") as api_key_file:
                     encrypted_api_key = api_key_file.read()
                     final_api_key = decrypt_data(encryption_key, encrypted_api_key)
+                    if api_key:
+                        log.info(
+                            f"To re-authenticate with a new API Key, "
+                            f"remove the current [italic]Netlas.io API key[/] and its "
+                            f"[italic]encryption key[/] located in "
+                            f"{CURRENT_FILE_DIRECTORY}."
+                        )
     except Exception as e:
         log.error(f"An error occurred while handling the API key: {e}")
         raise
