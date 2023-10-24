@@ -31,7 +31,7 @@ def setup_logging(debug_mode: bool) -> logging.getLogger:
         level="NOTSET" if debug_mode else "INFO",
         format="%(message)s",
         handlers=[
-            RichHandler(markup=True, log_time_format="%I:%M:%S %p", show_level=False)
+            RichHandler(markup=True, log_time_format="%I:%M:%S %p", show_level=True)
         ],
     )
     return logging.getLogger("Net Lasso")
