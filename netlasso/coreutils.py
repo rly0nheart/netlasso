@@ -160,7 +160,7 @@ def create_parser() -> argparse.ArgumentParser:
         "-c", "--csv", help="Write results to a CSV file", action="store_true"
     )
     parser.add_argument(
-        "-v", "--version", version=f"Netlasso v{__version__}", action="version"
+        "-v", "--version", version=f"Net Lasso v{__version__}", action="version"
     )
 
     return parser
