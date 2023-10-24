@@ -1,43 +1,22 @@
+import asyncio
 from datetime import datetime
 
-import netlas
 from rich import print
 from rich.tree import Tree
 
+from .api import API
 from .coreutils import (
     __version__,
     create_parser,
     log,
+    message,
     path_finder,
     save_data,
 )
-from .locksmith import set_api_key
 from .tree_masonry import result_branch
 
 
-def search(query: str, page: int, api_key: str) -> list:
-    """
-    Searches Netlas.io and fetches search results that match a given query.
-
-    :param query: Search query string.
-    :param page: Page number to get results from (default is 0)
-    :param api_key: A valid Netlas.io API key.
-    :return: A list of results that matched the query.
-    """
-    netlas_query = None
-    try:
-        # create new connection to Netlas
-        netlas_connection = netlas.Netlas(api_key=api_key)
-
-        # retrieve data from responses by query
-        netlas_query = netlas_connection.query(query=query, page=page)
-    except netlas.exception.APIError as e:
-        log.error(f"An API Error occurred: {e}")
-
-    return netlas_query.get("items")
-
-
-def visualise_results(
+async def visualise_results(
     results: list,
     limit: int,
     save_to_json: bool,
@@ -84,34 +63,53 @@ def visualise_results(
 def on_call():
     start_time = datetime.now()
     args = create_parser().parse_args()
-    api_key = set_api_key(args.authenticate)
 
     if args.query:
-        try:
-            print(
-                """
+        print(
+            """
 ┳┓     ┓       
 ┃┃┏┓╋  ┃ ┏┓┏┏┏┓
 ┛┗┗ ┗  ┗┛┗┻┛┛┗┛"""
+        )
+
+        try:
+            api = API()
+            log.info(
+                message(
+                    message_type="info",
+                    message_key="program_started",
+                    program_name="Net Lasso",
+                    version=__version__,
+                    start_time=start_time,
+                )
             )
             path_finder()
-            log.info(f"Starting [bold]Net Lasso[/] {__version__} at {start_time}")
 
-            results = search(
-                query=args.query,
-                page=args.page,
-                api_key=api_key,
+            search_results = asyncio.run(api.search(query=args.query, page=args.page))
+            asyncio.run(
+                visualise_results(
+                    results=search_results,
+                    limit=args.limit,
+                    save_to_csv=args.csv,
+                    save_to_json=args.json,
+                )
             )
-            visualise_results(
-                results=results,
-                return_raw=args.raw,
-                limit=args.limit,
-                save_to_csv=args.csv,
-                save_to_json=args.json,
-            )
+
         except KeyboardInterrupt:
-            log.warning("User interruption detected (Ctrl+C)")
+            log.warning(
+                message(message_type="warning", message_key="user_interruption")
+            )
         except Exception as e:
-            log.error(f"An error occurred: {e}")
+            log.error(
+                message(
+                    message_type="error", message_key="unknown_error", error_message=e
+                )
+            )
         finally:
-            log.info(f"Stopped in {datetime.now() - start_time} seconds.")
+            log.info(
+                message(
+                    message_type="info",
+                    message_key="program_stopped",
+                    run_time=datetime.now() - start_time,
+                )
+            )
