@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "netlasso"
-version = "1.0.0"
+version = "0.1b1"
 description = "Reddit Data Analysis Toolkit."
 authors = ["Richard Mwewa <rly0nheart@duck.com>"]
 readme = "README.md"
@@ -14,9 +14,10 @@ documentation = "https://github.com/rly0nheart/netlasso/blob/master/README.md"
 repository = "https://github.com/rly0nheart/netlasso"
 keywords = ["iot", "internet-of-things", "netlas-io-api", "netlas-io", "netlas"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
+   #"Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
-    "Intended Audience :: Information Security",
+    "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Natural Language :: English"
