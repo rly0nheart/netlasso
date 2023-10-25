@@ -17,7 +17,7 @@ info_messages = {
     "help": "usage: [green]{program_call} -h/--help[/]",
     "data_saved": "{data_type} written to [link file://{file_path}]{file_path}",
     "update": "[bold]{program_name}[/] {version} is available. "
-    "To update, run: [italic][green]pip install --upgrade {program_call}[/][/]",
+    "To update, run: [italic][green]pip install --upgrade {program_call_name}[/][/]",
 }
 
 
