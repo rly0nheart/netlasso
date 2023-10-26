@@ -7,7 +7,7 @@ from rich.tree import Tree
 from .coreutils import format_api_data, save_data
 
 
-class TreeMason:
+class Masonry:
     def __init__(
         self,
         query: str,
@@ -18,7 +18,8 @@ class TreeMason:
         return_raw: bool = False,
     ):
         """
-        Initialises the TreeMason class with results' data to populate the main_tree with.
+        Masonry class creates and populates the main_tree with branches
+        containing data on each result from the results list.
 
         :param query: A search query string.
         :param results: A list of JSON objects each containing result data.
@@ -28,13 +29,15 @@ class TreeMason:
         :param return_raw: A boolean value indicating whether results
             should not be visualised in a tree and instead be printed in raw JSON format.
         """
+        current_time = datetime.now()
         self.results = results
         self.limit = limit
         self.save_json = save_json
         self.save_csv = save_csv
         self.return_raw = return_raw
         self.main_tree = Tree(
-            f"Visualising [cyan]{self.limit}[/] results for [italic][yellow]{query}[/][/] - {datetime.now()}",
+            f"Showing [cyan]{self.limit}[/] results for [italic][yellow]{query}[/][/] at "
+            f"{current_time.strftime('%a %b %d %Y, %H:%M:%S %p')}",
             guide_style="bold bright_blue",
         )
 
@@ -64,8 +67,45 @@ class TreeMason:
                     branch.add(additional_text, style="italic")
             else:
                 for index, item in enumerate(branch_data, start=1):
-                    branch.add(f"{index}. {item}", style="italic")
+                    if type(item) is dict:
+                        for item_key, item_value in item.items():
+                            branch.add(f"{item_key}: {item_value}")
+                    else:
+                        branch.add(f"{index}. {item}", style="italic")
         return branch
+
+    def add_certificate_branch(self, target_tree: Tree, certificate_data) -> Tree:
+        certificate_branch = target_tree.add("Certificate")
+        self.add_branch(
+            target_tree=certificate_branch,
+            branch_title=certificate_data.get("serial_number"),
+            branch_data=format_api_data(
+                api_data=certificate_data,
+                data_file="certificate/summary.json",
+            ),
+        )
+        self.add_branch(
+            target_tree=certificate_branch,
+            branch_title="Issuer",
+            branch_data=format_api_data(
+                api_data=certificate_data.get("issuer"),
+                data_file="certificate/issuer.json",
+            ),
+        )
+        self.add_branch(
+            target_tree=certificate_branch,
+            branch_title="Validity",
+            branch_data=certificate_data.get("validity"),
+        )
+
+        if certificate_data.get("names"):
+            self.add_branch(
+                target_tree=certificate_branch,
+                branch_title="Names",
+                branch_data=certificate_data.get("names"),
+            )
+
+        return certificate_branch
 
     def result_branch(self, main_tree: Tree, result_data: dict) -> Tree:
         """
@@ -75,7 +115,9 @@ class TreeMason:
         :param result_data: Data to populate the branch with.
         :return: main_tree with the populated result_branch.
         """
-        summary_data = format_api_data(api_data=result_data, data_file="summary.json")
+        summary_data = format_api_data(
+            api_data=result_data, data_file="host/summary.json"
+        )
 
         # Add a summary branch to the main_tree and populate it with the summary data
         branch = main_tree.add(result_data.get("isp"))
@@ -87,7 +129,7 @@ class TreeMason:
             target_tree=branch,
             branch_title="Location",
             branch_data=format_api_data(
-                api_data=result_data.get("geo"), data_file="location.json"
+                api_data=result_data.get("geo"), data_file="host/location.json"
             ),
         )
 
@@ -98,7 +140,7 @@ class TreeMason:
             branch_title="Net",
             branch_data=format_api_data(
                 api_data=result_data.get("whois").get("net"),
-                data_file="net.json",
+                data_file="host/net.json",
             ),
             additional_text=result_data.get("whois").get("net").get("description"),
         )
@@ -107,9 +149,14 @@ class TreeMason:
             branch_title="ASN",
             branch_data=format_api_data(
                 api_data=result_data.get("whois").get("asn"),
-                data_file="asn.json",
+                data_file="host/asn.json",
             ),
         )
+
+        if result_data.get("certificate"):
+            self.add_certificate_branch(
+                target_tree=branch, certificate_data=result_data.get("certificate")
+            )
 
         # Add a Domains branch to the main_tree and populate it with a list of domains associated with the result
         if result_data.get("domain"):
