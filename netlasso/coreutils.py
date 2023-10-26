@@ -32,13 +32,15 @@ def setup_logging(debug_mode: bool) -> logging.getLogger:
         level="NOTSET" if debug_mode else "INFO",
         format="%(message)s",
         handlers=[
-            RichHandler(markup=True, log_time_format="%I:%M:%S %p", show_level=True)
+            RichHandler(
+                markup=True, log_time_format="%I:%M:%S %p", show_level=debug_mode
+            )
         ],
     )
     return logging.getLogger("Net Lasso")
 
 
-def format_api_data(api_data: dict, data_file: str) -> dict:
+def data_broker(api_data: dict, data_file: str) -> dict:
     """
     Formats API data based on a key mapping from a JSON file.
 
@@ -138,7 +140,7 @@ def create_parser() -> argparse.ArgumentParser:
         "--limit",
         type=int,
         default=10,
-        help="Number of results to return (default: %(default)s)",
+        help="Number of results to return (each page returns 20 results. default is %(default)s)",
     )
     parser.add_argument("-d", "--debug", help="Enable debug mode", action="store_true")
     parser.add_argument(
@@ -158,7 +160,8 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-log = setup_logging(debug_mode=create_parser().parse_args().debug)
+args = create_parser().parse_args()
+log = setup_logging(debug_mode=args.debug)
 
 # Construct path to the program's directory
 PROGRAM_DIRECTORY = os.path.expanduser(os.path.join("~", "netlasso"))
