@@ -40,7 +40,7 @@ def setup_logging(debug_mode: bool) -> logging.getLogger:
     return logging.getLogger("Net Lasso")
 
 
-def format_api_data(api_data: dict, data_file: str) -> dict:
+def data_broker(api_data: dict, data_file: str) -> dict:
     """
     Formats API data based on a key mapping from a JSON file.
 
