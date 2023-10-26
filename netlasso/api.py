@@ -67,7 +67,6 @@ class Api:
                         program_name="Net Lasso",
                         program_call_name="netlasso",
                         release_version=remote_version,
-                        current_version=__version__,
                     )
                 )
 
