@@ -1,0 +1,11 @@
+{
+  "name": "Name",
+  "handle": "Handle",
+  "country": "Country",
+  "address": "Address",
+  "start_ip": "Start IP",
+  "end_ip": "End IP",
+  "range": "Range",
+  "cidr": "CIDR",
+  "net_size": "Net size"
+}

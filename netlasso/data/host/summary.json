@@ -1,0 +1,11 @@
+{
+  "ip": "IP",
+  "uri": "URI",
+  "host": "Host",
+  "host_type": "Host type",
+  "port": "Port",
+  "protocol": "Protocol",
+  "prot4": "Prot4",
+  "path": "Path",
+  "last_updated": "Last updated"
+}

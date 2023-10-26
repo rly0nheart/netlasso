@@ -1,0 +1,9 @@
+{
+  "organization": "Organisation",
+  "common_name": "Common Name",
+  "email_address": "Email",
+  "organizational_unit": "Organisational Unit",
+  "locality": "Locality",
+  "province": "Province",
+  "country": "Country"
+}
