@@ -57,7 +57,7 @@ class Api:
         from rich import print
 
         response = self.get_data(endpoint=self.updates_endpoint)
-        if response:
+        if response.get("tag_name"):
             remote_version = response.get("tag_name")
             if remote_version != __version__:
                 log.info(
@@ -82,4 +82,4 @@ class Api:
         :return: A list of results that matched the query.
         """
         search_results = self.get_data(endpoint=self.search_endpoint % (query, page))
-        return search_results.get("items")
+        return search_results.get("items") if search_results else []
