@@ -1,19 +1,17 @@
-from datetime import datetime
+def on_query():
+    from datetime import datetime
 
-from .api import Api
-from .coreutils import (
-    create_parser,
-    log,
-    message,
-    path_finder,
-    __version__,
-)
-from .masonry import TreeMason
+    from .api import Api
+    from .coreutils import (
+        args,
+        log,
+        message,
+        path_finder,
+        __version__,
+    )
+    from .masonry import Masonry
 
-
-def on_call():
     start_time = datetime.now()
-    args = create_parser().parse_args()
 
     print(
         """
@@ -28,18 +26,21 @@ def on_call():
                 message_type="info",
                 message_key="program_started",
                 program_name="Net Lasso",
-                version=__version__,
-                start_time=start_time,
+                program_version=__version__,
+                start_time=start_time.strftime("%a %b %d %Y, %I:%M:%S %p"),
             )
         )
-
-        api = Api()
         path_finder()
+
+        api = Api(
+            netlas_api_endpoint="https://app.netlas.io/api",
+            github_api_endpoint="https://api.github.com",
+        )
 
         api.check_updates()
         search_results = api.search(query=args.query, page=args.page)
 
-        tree_masonry = TreeMason(
+        tree_masonry = Masonry(
             query=args.query,
             results=search_results,
             limit=args.limit,
