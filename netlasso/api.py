@@ -5,15 +5,10 @@ from .messages import message
 
 
 class Api:
-    BASE_NETLAS_API_ENDPOINT = "https://app.netlas.io/api"
-    BASE_GITHUB_API_ENDPOINT = "https://api.github.com"
-
-    def __init__(self):
-        self.search_endpoint = (
-            f"{Api.BASE_NETLAS_API_ENDPOINT}/responses/?q=%s&start=%s"
-        )
+    def __init__(self, netlas_api_endpoint: str, github_api_endpoint: str):
+        self.search_endpoint = f"{netlas_api_endpoint}/responses/?q=%s&start=%s"
         self.updates_endpoint = (
-            f"{Api.BASE_GITHUB_API_ENDPOINT}/repos/rly0nheart/netlasso/releases/latest"
+            f"{github_api_endpoint}/repos/rly0nheart/netlasso/releases/latest"
         )
 
     @staticmethod
@@ -68,10 +63,11 @@ class Api:
                 log.info(
                     message(
                         message_type="info",
-                        message_key="update",
+                        message_key="update_found",
                         program_name="Net Lasso",
                         program_call_name="netlasso",
-                        version=remote_version,
+                        release_version=remote_version,
+                        current_version=__version__,
                     )
                 )
 
