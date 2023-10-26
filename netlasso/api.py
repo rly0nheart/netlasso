@@ -82,4 +82,4 @@ class Api:
         :return: A list of results that matched the query.
         """
         search_results = self.get_data(endpoint=self.search_endpoint % (query, page))
-        return search_results.get("items") if search_results else []
+        return search_results.get("items")
