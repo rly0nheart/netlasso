@@ -189,33 +189,32 @@ class Masonry:
 
     def visualise_results(self):
         """
-        Saves and visualises the search results into a tree structure.
+        Visualises the search results into a tree structure.
         """
-        if self.results:
-            for result_index, result in enumerate(self.results, start=1):
-                raw_result_data = result.get("data")
+        for result_index, result in enumerate(self.results, start=1):
+            raw_result_data = result.get("data")
 
-                # If -r/--raw is passed, return results in raw JSON format
-                if self.return_raw:
-                    print(raw_result_data)
-                    print("\n")
-                else:
-                    # Otherwise, populate the result_branch and add it to the main_tree
-                    self.result_branch(
-                        main_tree=self.main_tree, result_data=raw_result_data
-                    )
-
-                # Save each result to a file (if the right command-line arguments are passed)
-                save_data(
-                    data=raw_result_data,
-                    save_to_json=self.save_json,
-                    save_to_csv=self.save_csv,
-                    filename=f"{raw_result_data.get('isp')}_{raw_result_data.get('ip')}",
+            # If -r/--raw is passed, return results in raw JSON format
+            if self.return_raw:
+                print(raw_result_data)
+                print("\n")
+            else:
+                # Otherwise, populate the result_branch and add it to the main_tree
+                self.result_branch(
+                    main_tree=self.main_tree, result_data=raw_result_data
                 )
 
-                # If result_index is equal to the limit, break the loop and visualise the main_tree
-                if result_index == self.limit:
-                    break
+            # Save each result to a file (if the right command-line arguments are passed)
+            save_data(
+                data=raw_result_data,
+                save_to_json=self.save_json,
+                save_to_csv=self.save_csv,
+                filename=f"{raw_result_data.get('isp')}_{raw_result_data.get('ip')}",
+            )
 
-            if not self.return_raw:
-                print(self.main_tree)
+            # If result_index is equal to the limit, break the loop and visualise the main_tree
+            if result_index == self.limit:
+                break
+
+        if not self.return_raw:
+            print(self.main_tree)
