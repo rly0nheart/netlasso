@@ -39,16 +39,18 @@ def on_query():
 
         api.check_updates()
         search_results = api.search(query=args.query, page=args.page)
-
-        tree_masonry = Masonry(
-            query=args.query,
-            results=search_results,
-            limit=args.limit,
-            save_json=args.json,
-            save_csv=args.csv,
-            return_raw=args.raw,
-        )
-        tree_masonry.visualise_results()
+        if search_results:
+            tree_masonry = Masonry(
+                query=args.query,
+                results=search_results,
+                limit=args.limit,
+                save_json=args.json,
+                save_csv=args.csv,
+                return_raw=args.raw,
+            )
+            tree_masonry.visualise_results()
+        else:
+            log.info(f"No results found for [italic][yellow]{args.query}[/][/]")
 
     except KeyboardInterrupt:
         log.warning(message(message_type="warning", message_key="user_interruption"))
