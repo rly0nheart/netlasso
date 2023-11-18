@@ -1,4 +1,4 @@
-![netlasso](https://github.com/rly0nheart/netlasso/assets/74001397/939673e3-4a1c-4af4-a6b2-aa1a5dd9be3a)
+![netlasso](https://github.com/rly0nheart/netlasso/assets/74001397/526a3e23-7882-4d44-a04d-89519444db33)
 
 
 **Net Lasso** utilises the [Netlas.io API](https://netlas.io/api) to perform advanced searches for internet-connected (
@@ -19,6 +19,9 @@ You can start searching by calling **Net Lasso** with a search query
 ```commandline
 netlasso <query_string>
 ```
+> Call `netlasso` without command-line arguments to run it in interactive CLI mode.
+>> Calling `netlasso` with only the `-d/--debug` flag will run the interactive CLI in debug mode.
+
 
 # Netlas.io Dorks
 
