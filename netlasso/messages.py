@@ -14,9 +14,8 @@ error_messages = {
 info_messages = {
     "program_started": "Started [bold]{program_name}[/] {program_version} at {start_time}...",
     "program_stopped": "Stopped in {run_time} seconds.",
-    "help": "usage: [green]{program_call} -h/--help[/]",
     "data_saved": "{data_type} written to [link file://{file_path}]{file_path}",
-    "update_found": "[bold]{program_name}[/] {release_version} is available. "
+    "update_found": "A new release of [bold]{program_name}[/] ({current_version} -> {release_version}) is available. "
     "To update, run: [italic][green]pip install --upgrade {program_call_name}[/][/]",
 }
 
