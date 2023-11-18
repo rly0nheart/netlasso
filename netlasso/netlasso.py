@@ -29,12 +29,8 @@ def on_query():
             github_api_endpoint="https://api.github.com",
         )
         query = args.query or Prompt.ask("Enter search query", default="port:7070")
-        page = (
-            args.page
-            if hasattr(args, "page")
-            else Prompt.ask(
-                "From which page would you like to get results?", default="0"
-            )
+        page = args.page or Prompt.ask(
+            "From which page would you like to get results?", default="0"
         )
 
         if args.query:
