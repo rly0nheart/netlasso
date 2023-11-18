@@ -7,6 +7,8 @@ __description__ = """
 
 __epilog__ = f"""
 > To run an interactive CLI, call `netlasso` without command-line arguments.
+>> Calling `netlasso` with only the `-d/--debug` will run the interactive CLI in debug mode.
+
 # by [{__author__}]({__about__})
 ```
 MIT License
