@@ -17,7 +17,8 @@ class Api:
         Fetches JSON data from a given API endpoint.
 
         :param endpoint: The API endpoint to fetch data from.
-        :return: A JSON object from the endpoint.
+        :return: A JSON object from the endpoint if request was successful.
+            An empty JSON object if request unsuccessful.
         """
         try:
             with requests.get(url=endpoint) as response:
@@ -31,6 +32,7 @@ class Api:
                             error_message=response.json(),
                         )
                     )
+                    return {}
         except requests.exceptions.RequestException as error:
             log.error(
                 message(
@@ -39,6 +41,7 @@ class Api:
                     error_message=error,
                 )
             )
+            return {}
         except Exception as error:
             log.critical(
                 message(
@@ -47,6 +50,7 @@ class Api:
                     error_message=error,
                 )
             )
+            return {}
 
     def check_updates(self):
         """
@@ -82,4 +86,4 @@ class Api:
         :return: A list of results that matched the query.
         """
         search_results = self.get_data(endpoint=self.search_endpoint % (query, page))
-        return search_results.get("items")
+        return search_results.get("items", [])
