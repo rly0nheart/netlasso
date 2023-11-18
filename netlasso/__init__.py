@@ -6,8 +6,8 @@ __description__ = """
 > **Net Lasso** utilises the [Netlas.io API](https://netlas.io/api) to perform advanced searches for internet-connected (IoT) devices based on user-provided search queries."""
 
 __epilog__ = f"""
+> To run an interactive CLI, call `netlasso` without command-line arguments.
 # by [{__author__}]({__about__})
-
 ```
 MIT License
 
