@@ -1,17 +1,84 @@
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+import asyncio
+from dataclasses import dataclass
+from datetime import datetime
+
+import aiohttp
+from rich.pretty import pprint
+
+from . import __version__
+from .api import get_results, check_updates
+from .coreutils import args, log, save_data, pathfinder
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+
+@dataclass
+class Host:
+    isp: str
+    ip: str
+    port: int
+    uri: str
+    host: str
+    host_type: str
+    domains: str
+    protocol: str
+    prot4: str
+    path: str
+    last_updated: str
+    last_seen: str
+    location: dict
+    whois: dict
+    certificate: dict
+    raw_data: dict
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+
+async def search(query: str, page: int) -> list[Host]:
+    async with aiohttp.ClientSession() as session:
+        await check_updates(session=session)
+
+        results: list = await get_results(query=query, page=page, session=session)
+        results_list: list = []
+        if results:
+            for result in results:
+                data: dict = result.get("data")
+                host = Host(
+                    isp=data.get("isp"),
+                    ip=data.get("ip"),
+                    port=data.get("port"),
+                    uri=data.get("uri"),
+                    host=data.get("host"),
+                    host_type=data.get("host_type"),
+                    domains=data.get("domain"),
+                    protocol=data.get("protocol"),
+                    prot4=data.get("prot4"),
+                    path=data.get("path"),
+                    location=data.get("geo"),
+                    whois=data.get("whois"),
+                    certificate=data.get("certificate"),
+                    last_updated=data.get("last_updated"),
+                    last_seen=data.get("last_seen"),
+                    raw_data=data,
+                )
+                results_list.append(host)
+            return results_list
+        else:
+            log.info(f"No results found for {query}.")
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+
 def on_query():
-    from datetime import datetime
+    # -------------------------------------------------------- #
 
-    from rich.prompt import Prompt, Confirm
+    start_time = datetime.now()
 
-    from .api import Api
-    from .coreutils import (
-        args,
-        log,
-        message,
-        path_finder,
-        __version__,
-    )
-    from .masonry import Masonry
+    # -------------------------------------------------------- #
 
     print(
         """
@@ -20,73 +87,29 @@ def on_query():
 ┛┗┗ ┗  ┗┛┗┻┛┛┗┛"""
     )
 
-    start_time = datetime.now()
-    path_finder()
+    log.info(
+        f"[bold]Net Lasso[/] {__version__} started at {start_time.strftime('%a %b %d %Y, %I:%M:%S%p')}..."
+    )
+
+    # -------------------------------------------------------- #
 
     try:
-        api = Api(
-            netlas_api_endpoint="https://app.netlas.io/api",
-            github_api_endpoint="https://api.github.com",
-        )
-        query = args.query or Prompt.ask("Enter search query", default="port:7070")
-        page = args.page or Prompt.ask(
-            "From which page would you like to get results?", default="0"
-        )
+        pathfinder()
+        function_data: list = asyncio.run(search(query=args.query, page=args.page))
+        pprint(function_data, expand_all=True)
 
-        if args.query:
-            log.info(
-                message(
-                    message_type="info",
-                    message_key="program_started",
-                    program_name="Net Lasso",
-                    program_version=__version__,
-                    start_time=start_time.strftime("%a %b %d %Y, %I:%M:%S %p"),
-                )
+        if args.json or args.csv:
+            save_data(
+                data=function_data,
+                filename=args.query,
+                save_json=args.json,
+                save_csv=args.csv,
             )
-            api.check_updates()
-
-        search_results = api.search(query=query, page=int(page))
-        if search_results:
-            tree_masonry = Masonry(
-                query=query,
-                results=search_results,
-                limit=args.limit
-                if hasattr(args, "limit")
-                else Prompt.ask("How many results would you like to show?", default=10),
-                save_json=args.json
-                if hasattr(args, "json")
-                else Confirm.ask(
-                    "Would you like to save the output to a JSON file?", default=False
-                ),
-                save_csv=args.csv
-                if hasattr(args, "csv")
-                else Confirm.ask(
-                    "Would you like to save the output to a CSV file?", default=False
-                ),
-                return_raw=args.raw
-                if hasattr(args, "raw")
-                else Confirm.ask(
-                    "Would you like to return results in raw JSON format?",
-                    default=False,
-                ),
-            )
-            tree_masonry.visualise_results()
-        else:
-            log.info(f"No results found for [italic][yellow]{query}[/][/]")
 
     except KeyboardInterrupt:
-        log.warning(message(message_type="warning", message_key="user_interruption"))
-    except Exception as error:
-        log.error(
-            message(
-                message_type="error", message_key="unknown_error", error_message=error
-            )
-        )
+        log.warning("User interruption detected (Ctrl+C)")
     finally:
-        log.info(
-            message(
-                message_type="info",
-                message_key="program_stopped",
-                run_time=datetime.now() - start_time,
-            )
-        )
+        log.info(f"Stopped in {datetime.now() - start_time} seconds.")
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
