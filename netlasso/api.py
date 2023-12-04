@@ -1,90 +1,131 @@
-import requests
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
-from .coreutils import log, __version__
-from .messages import message
+import aiohttp
+
+from .coreutils import log
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+NETLAS_API_ENDPOINT: str = "https://app.netlas.io/api"
+PYPI_PROJECT_ENDPOINT: str = "https://pypi.org/pypi/netlasso/json"
 
 
-class Api:
-    def __init__(self, netlas_api_endpoint: str, github_api_endpoint: str):
-        self.search_endpoint = f"{netlas_api_endpoint}/responses/?q=%s&start=%s"
-        self.updates_endpoint = (
-            f"{github_api_endpoint}/repos/rly0nheart/netlasso/releases/latest"
-        )
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
-    @staticmethod
-    def get_data(endpoint: str) -> dict:
-        """
-        Fetches JSON data from a given API endpoint.
 
-        :param endpoint: The API endpoint to fetch data from.
-        :return: A JSON object from the endpoint if request was successful.
-            An empty JSON object if request unsuccessful.
-        """
-        try:
-            with requests.get(url=endpoint) as response:
-                if response.status_code == 200:
-                    return response.json()
-                else:
-                    log.error(
-                        message(
-                            message_type="error",
-                            message_key="api_error",
-                            error_message=response.json(),
-                        )
-                    )
-                    return {}
-        except requests.exceptions.RequestException as error:
-            log.error(
-                message(
-                    message_type="error",
-                    message_key="http_error",
-                    error_message=error,
-                )
+async def get_data(endpoint: str, session: aiohttp.ClientSession) -> dict:
+    """
+    Fetches JSON data from a given API endpoint.
+
+    :param endpoint: The API endpoint to fetch data from.
+    :param session: aiohttp session to use for the request.
+    :return: A JSON object from the endpoint if request was successful.
+        An empty JSON object if request was unsuccessful.
+    """
+    try:
+        async with session.get(url=endpoint) as response:
+            if response.status == 200:
+                return await response.json()
+            else:
+                error_message: dict = await response.json()
+                log.error(f"An API error occurred: {error_message}")
+                return {}
+    except aiohttp.ClientConnectionError as error:
+        log.error(f"An HTTP error occurred: [red]{error}[/]")
+        return {}
+    except Exception as error:
+        log.critical(f"An unknown error occurred: [red]{error}[/]")
+        return {}
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+
+async def get_results(
+    query: str, page: int, session: aiohttp.ClientSession
+) -> list[dict]:
+    """
+    Searches Netlas.io and fetches search results that match a given query.
+
+    :param query: Search query string.
+    :param page: Page to start from.
+    :param session: aiohttp session to use for the request.
+    :return: A list of results that matched the query.
+    """
+    response: dict = await get_data(
+        endpoint=f"{NETLAS_API_ENDPOINT}/responses/?q={query}&start={page}",
+        session=session,
+    )
+    results: list = response.get("items", [])
+
+    return results
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+
+
+async def check_updates(session: aiohttp.ClientSession):
+    """
+    Gets and compares the current program version with the remote version.
+
+    Assumes version format: major.minor.patch.prefix
+
+    :param session: aiohttp session to use for the request.
+    """
+    from . import __version__
+
+    # Make a GET request to PyPI to get the project's latest release.
+    response: dict = await get_data(endpoint=PYPI_PROJECT_ENDPOINT, session=session)
+
+    if response.get("info"):
+        remote_version: str = response.get("info").get("version")
+        # Splitting the version strings into components
+        remote_parts: list = remote_version.split(".")
+        local_parts: list = __version__.split(".")
+
+        update_message: str = ""
+
+        # ---------------------------------------------------------- #
+
+        # Check for differences in version parts
+        if remote_parts[0] != local_parts[0]:
+            update_message = (
+                f"MAJOR update ({remote_version}) available:"
+                f" It might introduce significant changes."
             )
-            return {}
-        except Exception as error:
-            log.critical(
-                message(
-                    message_type="error",
-                    message_key="unexpected_error",
-                    error_message=error,
-                )
+
+        # ---------------------------------------------------------- #
+
+        elif remote_parts[1] != local_parts[1]:
+            update_message = (
+                f"MINOR update ({remote_version}) available:"
+                f" Includes small feature changes/improvements."
             )
-            return {}
 
-    def check_updates(self):
-        """
-        Checks for updates from the program's releases.
-        If the release version does not match the current program version, assume the program is outdated.
-        """
-        from rich.markdown import Markdown
-        from rich import print
+        # ---------------------------------------------------------- #
 
-        response = self.get_data(endpoint=self.updates_endpoint)
-        if response.get("tag_name"):
-            remote_version = response.get("tag_name")
-            if remote_version != __version__:
-                log.info(
-                    message(
-                        message_type="info",
-                        message_key="update_found",
-                        program_name="Net Lasso",
-                        program_call_name="netlasso",
-                        release_version=remote_version,
-                        current_version=__version__,
-                    )
-                )
+        elif remote_parts[2] != local_parts[2]:
+            update_message = (
+                f"PATCH update ({remote_version}) available:"
+                f" Generally for bug fixes and small tweaks."
+            )
 
-                release_notes = Markdown(response.get("body"))
-                print(release_notes)
+        # ---------------------------------------------------------- #
 
-    def search(self, query: str, page: int):
-        """
-        Searches Netlas.io and fetches search results that match a given query.
+        elif (
+            len(remote_parts) > 3
+            and len(local_parts) > 3
+            and remote_parts[3] != local_parts[3]
+        ):
+            update_message = (
+                f"BUILD update ({remote_version}) available."
+                f" Might be for specific builds or special versions."
+            )
 
-        :param query: Search query string.
-        :param page: Page number to get results from (default is 0)
-        :return: A list of results that matched the query.
-        """
-        search_results = self.get_data(endpoint=self.search_endpoint % (query, page))
-        return search_results.get("items", [])
+        # ---------------------------------------------------------- #
+
+        if update_message:
+            log.info(update_message)
+
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #

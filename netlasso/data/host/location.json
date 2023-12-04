@@ -1,8 +1,0 @@
-{
-  "continent": "Continent",
-  "country": "Country",
-  "city": "City",
-  "tz": "Timezone",
-  "location": "Coordinates",
-  "subdivisions": "Subdivisions"
-}

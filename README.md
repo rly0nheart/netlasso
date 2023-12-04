@@ -1,5 +1,4 @@
-![netlasso](https://github.com/rly0nheart/netlasso/assets/74001397/526a3e23-7882-4d44-a04d-89519444db33)
-
+![netlasso](https://github.com/rly0nheart/netlasso/assets/74001397/8793fef6-5533-4479-8112-df1c108bf6eb)
 
 **Net Lasso** utilises the [Netlas.io API](https://netlas.io/api) to perform advanced searches for internet-connected (
 IoT) devices based on user-provided search queries.
@@ -17,11 +16,8 @@ pip install netlasso
 You can start searching by calling **Net Lasso** with a search query
 
 ```commandline
-netlasso <query_string>
+netlasso QUERY_STRING
 ```
-> Call `netlasso` without command-line arguments to run it in interactive CLI mode.
->> Calling `netlasso` with only the `-d/--debug` flag will run the interactive CLI in debug mode.
-
 
 # Netlas.io Dorks
 

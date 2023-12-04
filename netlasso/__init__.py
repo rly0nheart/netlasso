@@ -1,14 +1,15 @@
+import os
+
 __author__ = "Richard Mwewa"
 __about__ = "https://about.me/rly0nheart"
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __description__ = """
 # Net Lasso
-> **Net Lasso** utilises the [Netlas.io API](https://netlas.io/api) to perform advanced searches for internet-connected (IoT) devices based on user-provided search queries."""
+> **Net Lasso** utilises the [Netlas.io API](https://netlas.io/api) to perform advanced searches for internet-connected 
+(IoT) devices based on user-provided search queries.
+"""
 
 __epilog__ = f"""
-> To run an interactive CLI, call `netlasso` without command-line arguments.
->> Calling `netlasso` with only the `-d/--debug` will run the interactive CLI in debug mode.
-
 # by [{__author__}]({__about__})
 ```
 MIT License
@@ -34,3 +35,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 """
+
+# Construct path to the program's directory
+PROGRAM_DIRECTORY = os.path.expanduser(os.path.join("~", "netlasso"))
+
+# Construct path to the current file's directory
+CURRENT_FILE_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+# Construct paths to directories of CSV and JSON files.
+CSV_DIRECTORY = os.path.join(PROGRAM_DIRECTORY, "csv")
+JSON_DIRECTORY = os.path.join(PROGRAM_DIRECTORY, "json")
